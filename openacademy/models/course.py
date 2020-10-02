@@ -9,7 +9,7 @@ class Course(models.Model):
 
     image = fields.Binary()
     name = fields.Char(string='Title', help='This is title for your course', required=True)
-    description = fields.Text(copy=False)
+    description = fields.Text(copy=False, string='Description')
     rich_description = fields.Html()
     responsibe_id = fields.Many2one('res.users',ondelete="cascade")
     session_ids = fields.One2many('openacademy.session', 'course_id')
