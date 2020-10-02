@@ -7,7 +7,7 @@ from odoo.exceptions import ValidationError
 class Session(models.Model):
     _name = 'openacademy.session'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _description = 'openacademy.session'
+    _description = 'openacademy_session'
 
     name = fields.Char(string='Session', required=True)
     start_date = fields.Date("Start Date", default=fields.Date.today)
@@ -48,15 +48,15 @@ class Session(models.Model):
     @api.depends('attende_ids', 'seats')
     def _calculate_occupation(self):
         for session in self:
-            session.attendee_count = len(session.attende_ids)
-            if session.seats:
-                session.occupation = session.attendee_count * 100 / session.seats
-            else:
-                session.occupation = 0.0
+        	if session :
+		    session.attendee_count = len(session.attende_ids)
+		    if session.seats:
+		        session.occupation = session.attendee_count * 100 / session.seats
+		    else:
+		        session.occupation = 0.0
 
     def print_sessions(self):
         lumber_partners = self.env['res.partner'].search([('name', '=', 'Lumber Inc')], limit=5)
-        print('\n\n\n ----------- lumber_partners :', lumber_partners)
 
     def confirm_session(self):
         self.state = 'confirmed'
