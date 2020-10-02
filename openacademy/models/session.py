@@ -12,13 +12,13 @@ class Session(models.Model):
     name = fields.Char(string='Session', required=True)
     start_date = fields.Date("Start Date", default=fields.Date.today)
     stop_date = fields.Date("Stop Date")
-    duration = fields.Float()
+    duration = fields.Float(string="Duration")
     seats = fields.Integer("Number of Seats")
     active = fields.Boolean(default=True, tracking=True)
     state = fields.Selection([('draft', 'Draft'), ('confirmed', 'Confirmed'), ('done', 'Done')], required=True, default='draft', tracking=True)
     instructor_id = fields.Many2one('res.partner')
-    instructor_mail = fields.Char(related='instructor_id.email')
-    course_id = fields.Many2one('openacademy.course')
+    instructor_mail = fields.Char(related='instructor_id.email', string="Instructor mail")
+    course_id = fields.Many2one('openacademy.course', string='Course')
     attende_ids = fields.Many2many('res.partner')
     attendee_count = fields.Integer(compute='_calculate_occupation', store=True, compute_sudo=True)
     occupation = fields.Float(compute='_calculate_occupation', compute_sudo=True)
@@ -38,6 +38,13 @@ class Session(models.Model):
     def write(self, values):
         # other code
         return super().write(values)
+
+
+    # Stop date should be after start date
+    @api.depends('start_date', 'stop_date')
+    def _onchange_dates(self):
+        if self.stop_date < self.start_date:
+            raise ValidationError(_("Stop date cannot be before start date"))
 
     def unlink(self):
         for session in self:
