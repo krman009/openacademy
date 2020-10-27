@@ -1,23 +1,22 @@
 odoo.define('openacademy.FieldIntegerRange', function (require) {
-"use strict";
+    "use strict";
 
-var basic_fields = require('web.basic_fields');
-var FieldInteger = basic_fields.FieldInteger;
-var field_registry = require('web.field_registry');
+    var basic_fields = require('web.basic_fields');
+    var FieldInteger = basic_fields.FieldInteger;
+    var field_registry = require('web.field_registry');
 
-var FieldIntegerRange = FieldInteger.extend({
+    var FieldIntegerRange = FieldInteger.extend({
 
-    _prepareInput: function () {
-        var result = this._super.apply(this, arguments);
-        this.$input.attr({type: 'range'});
-        return result;
-    },
+        _prepareInput: function () {
+            var result = this._super.apply(this, arguments);
+            this.$input.attr({type: 'range'});
+            return result;
+        },
 
+    });
 
-});
+    field_registry.add('int_range', FieldIntegerRange);
 
-field_registry.add('int_range', FieldIntegerRange);
-
-return FieldIntegerRange;
+    return FieldIntegerRange;
 
 });

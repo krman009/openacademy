@@ -15,13 +15,17 @@ class Session(models.Model):
     duration = fields.Float(string="Duration")
     seats = fields.Integer("Number of Seats")
     active = fields.Boolean(default=True, tracking=True)
-    state = fields.Selection([('draft', 'Draft'), ('confirmed', 'Confirmed'), ('done', 'Done')], required=True, default='draft', tracking=True)
+    state = fields.Selection([('draft', 'Draft'), ('confirmed', 'Confirmed'), (
+        'done', 'Done')], required=True, default='draft', tracking=True)
     instructor_id = fields.Many2one('res.partner')
-    instructor_mail = fields.Char(related='instructor_id.email', string="Instructor mail")
+    instructor_mail = fields.Char(
+        related='instructor_id.email', string="Instructor mail")
     course_id = fields.Many2one('openacademy.course', string='Course')
     attende_ids = fields.Many2many('res.partner')
-    attendee_count = fields.Integer(compute='_calculate_occupation', store=True, compute_sudo=True)
-    occupation = fields.Float(compute='_calculate_occupation', compute_sudo=True)
+    attendee_count = fields.Integer(
+        compute='_calculate_occupation', store=True, compute_sudo=True)
+    occupation = fields.Float(
+        compute='_calculate_occupation', compute_sudo=True)
 
     @api.model
     def create(self, values):
@@ -44,26 +48,29 @@ class Session(models.Model):
     @api.depends('start_date', 'stop_date')
     def _onchange_dates(self):
         if self.stop_date < self.start_date:
-            raise ValidationError(_("Stop date cannot be before start date"))
+            raise ValidationError(
+                _("Stop date can't be before the start date."))
 
     def unlink(self):
         for session in self:
             if session.attendee_count:
-                raise ValidationError(_("You can not delete the session having attendees"))
+                raise ValidationError(
+                    _("You can't delete the session, which is having attendees."))
         return super().unlink()
 
     @api.depends('attende_ids', 'seats')
     def _calculate_occupation(self):
         for session in self:
-        	if session :
-		    session.attendee_count = len(session.attende_ids)
-		    if session.seats:
-		        session.occupation = session.attendee_count * 100 / session.seats
-		    else:
-		        session.occupation = 0.0
+            if session:
+                session.attendee_count = len(session.attende_ids)
+            if session.seats:
+                session.occupation = session.attendee_count * 100 / session.seats
+            else:
+                session.occupation = 0.0
 
     def print_sessions(self):
-        lumber_partners = self.env['res.partner'].search([('name', '=', 'Lumber Inc')], limit=5)
+        lumber_partners = self.env['res.partner'].search(
+            [('name', '=', 'Lumber Inc')], limit=5)
 
     def confirm_session(self):
         self.state = 'confirmed'

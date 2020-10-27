@@ -19,7 +19,7 @@
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'web_gantt', 'web_map', 'web_cohort', 'web_dashboard', 'website'],
-    'application' : True,
+    'application': True,
 
     # always loaded
     'data': [
